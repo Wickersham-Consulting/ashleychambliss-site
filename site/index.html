@@ -34,7 +34,6 @@
     <h3>Singer/Songwriter</h3>
     <ul class="social-icons">
       <li><a href="https://www.facebook.com/AshleyChamblissMusic/" target="_blank" rel="noopener" aria-label="Facebook" class="icon icon-facebook"></a></li>
-      <li><a href="https://twitter.com/ashleychambliss" target="_blank" rel="noopener" aria-label="X (Twitter)" class="icon icon-twitter"></a></li>
     </ul>
   </div>
 
@@ -105,7 +104,6 @@
   <ul class="social-row">
     <li><a href="http://facebook.com/ashleychamblissmusic" target="_blank" rel="noopener" aria-label="Facebook" class="icon icon-facebook"></a></li>
     <li><a href="https://www.instagram.com/ashleychamblissmusic/" target="_blank" rel="noopener" aria-label="Instagram" class="icon icon-instagram"></a></li>
-    <li><a href="http://twitter.com/ashleychambliss" target="_blank" rel="noopener" aria-label="X" class="icon icon-twitter"></a></li>
     <li><a href="https://ashleychambliss.bandcamp.com/" target="_blank" rel="noopener" aria-label="Bandcamp" class="icon icon-bandcamp"></a></li>
     <li><a href="https://www.youtube.com/channel/UCzSbblueYnl0WKfak6xRLqA" target="_blank" rel="noopener" aria-label="YouTube" class="icon icon-youtube"></a></li>
     <li><a href="https://soundcloud.com/ashleychambliss" target="_blank" rel="noopener" aria-label="SoundCloud" class="icon icon-soundcloud"></a></li>
@@ -113,16 +111,15 @@
   </ul>
 </footer>
 
-<aside id="release-toast" class="release-toast" hidden>
-  <a class="release-toast-link" href="https://music.apple.com/us/album/this-city-single/1895764827" target="_blank" rel="noopener">
-    <img src="img/thiscity.jpg" alt="">
-    <div class="release-toast-text">
-      <span class="release-toast-eyebrow">New single</span>
-      <span class="release-toast-title">This City</span>
-      <span class="release-toast-cta">Listen on Apple Music →</span>
-    </div>
-  </a>
-  <button class="release-toast-close" aria-label="Dismiss" type="button">×</button>
+<aside id="release-banner" class="release-banner" hidden>
+  <div class="release-banner-inner">
+    <span class="release-banner-text">
+      <span class="release-banner-eyebrow">New single out now</span>
+      <span class="release-banner-title">This City</span>
+      <a class="release-banner-cta" href="https://music.apple.com/us/album/this-city-single/1895764827" target="_blank" rel="noopener">Listen on Apple Music →</a>
+    </span>
+    <button class="release-banner-close" aria-label="Dismiss" type="button">×</button>
+  </div>
 </aside>
 
 <script>
@@ -132,31 +129,37 @@
   updateNav();
   window.addEventListener('scroll', updateNav, { passive: true });
 
-  // Latest-release toast: show once per browser, ~2s after load.
+  // Latest-release banner: show once per browser, ~2s after load,
+  // auto-tucks after 7s if untouched.
   (function () {
-    const KEY = 'thiscity-toast-seen';
+    const KEY = 'thiscity-banner-seen';
     if (localStorage.getItem(KEY)) return;
-    const toast = document.getElementById('release-toast');
-    if (!toast) return;
+    const banner = document.getElementById('release-banner');
+    if (!banner) return;
 
+    let dismissed = false;
     const dismiss = () => {
-      toast.classList.remove('show');
+      if (dismissed) return;
+      dismissed = true;
+      banner.classList.remove('show');
       localStorage.setItem(KEY, '1');
-      setTimeout(() => toast.remove(), 400);
+      setTimeout(() => banner.remove(), 500);
     };
 
-    toast.querySelector('.release-toast-close').addEventListener('click', (e) => {
+    banner.querySelector('.release-banner-close').addEventListener('click', (e) => {
       e.preventDefault();
       e.stopPropagation();
       dismiss();
     });
-    toast.querySelector('.release-toast-link').addEventListener('click', () => {
+    banner.querySelector('.release-banner-cta').addEventListener('click', () => {
       localStorage.setItem(KEY, '1');
     });
 
     setTimeout(() => {
-      toast.hidden = false;
-      requestAnimationFrame(() => toast.classList.add('show'));
+      banner.hidden = false;
+      requestAnimationFrame(() => banner.classList.add('show'));
+      // auto-tuck after 7s of being visible
+      setTimeout(dismiss, 7000);
     }, 2000);
   })();
 </script>
