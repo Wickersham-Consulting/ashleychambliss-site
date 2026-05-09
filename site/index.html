@@ -113,11 +113,52 @@
   </ul>
 </footer>
 
+<aside id="release-toast" class="release-toast" hidden>
+  <a class="release-toast-link" href="https://music.apple.com/us/album/this-city-single/1895764827" target="_blank" rel="noopener">
+    <img src="img/thiscity.jpg" alt="">
+    <div class="release-toast-text">
+      <span class="release-toast-eyebrow">New single</span>
+      <span class="release-toast-title">This City</span>
+      <span class="release-toast-cta">Listen on Apple Music →</span>
+    </div>
+  </a>
+  <button class="release-toast-close" aria-label="Dismiss" type="button">×</button>
+</aside>
+
 <script>
+  // Nav: dark bar fades in once you scroll past the hero edge.
   const nav = document.getElementById('site-nav');
-  const update = () => nav.classList.toggle('scrolled', window.scrollY > 80);
-  update();
-  window.addEventListener('scroll', update, { passive: true });
+  const updateNav = () => nav.classList.toggle('scrolled', window.scrollY > 80);
+  updateNav();
+  window.addEventListener('scroll', updateNav, { passive: true });
+
+  // Latest-release toast: show once per browser, ~2s after load.
+  (function () {
+    const KEY = 'thiscity-toast-seen';
+    if (localStorage.getItem(KEY)) return;
+    const toast = document.getElementById('release-toast');
+    if (!toast) return;
+
+    const dismiss = () => {
+      toast.classList.remove('show');
+      localStorage.setItem(KEY, '1');
+      setTimeout(() => toast.remove(), 400);
+    };
+
+    toast.querySelector('.release-toast-close').addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      dismiss();
+    });
+    toast.querySelector('.release-toast-link').addEventListener('click', () => {
+      localStorage.setItem(KEY, '1');
+    });
+
+    setTimeout(() => {
+      toast.hidden = false;
+      requestAnimationFrame(() => toast.classList.add('show'));
+    }, 2000);
+  })();
 </script>
 
 </body>
