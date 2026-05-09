@@ -1,0 +1,12 @@
+# Local-only artifacts
+.DS_Store
+*.swp
+
+# Visual reference materials — useful locally for diffing against the live site
+# but not needed in the deployable repo. Kept out of git to keep the repo tight.
+reference/
+assets/
+
+# Editor / OS
+.vscode/
+.idea/
