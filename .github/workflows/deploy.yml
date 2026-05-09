@@ -1,0 +1,39 @@
+name: deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  id-token: write   # for OIDC role assumption
+  contents: read
+
+# Don't run two deploys against the same bucket at once. Keep them queued
+# rather than cancelling so a fast follow-up commit still ships.
+concurrency:
+  group: deploy-main
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: us-west-2
+
+      - name: sync site/ to S3
+        run: aws s3 sync ./site/ "s3://${{ secrets.BUCKET_NAME }}/" --delete
+
+      - name: invalidate CloudFront cache
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id "${{ secrets.DISTRIBUTION_ID }}" \
+            --paths '/*' \
+            --query 'Invalidation.{Id: Id, Status: Status}' \
+            --output table
